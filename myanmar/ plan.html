@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>缅甸全境深度旅行攻略 (2/6 - 2/13)</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #map { height: 600px; width: 100%; z-index: 1; }
+        .custom-popup .leaflet-popup-content-wrapper { border-radius: 12px; padding: 5px; }
+        .route-step { transition: all 0.3s ease; }
+        .route-step:hover { transform: translateX(5px); background-color: #f0fdf4; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- 头部信息 -->
+        <header class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Live Itinerary</span>
+                    <span class="text-slate-400 text-xs">2026.02.06 - 2026.02.13</span>
+                </div>
+                <h1 class="text-4xl font-black text-slate-900 italic uppercase leading-none">缅甸实战可视化路线</h1>
+            </div>
+            <div class="flex gap-2">
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">当前核心预算</p>
+                    <p class="text-xl font-black text-emerald-600">约 500,000+ MMK</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- 出行前最后检查 -->
+        <section class="mb-8">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-2xl">🧳</span>
+                    <h2 class="text-xl font-bold text-slate-900">出行前最后检查</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">签证：</span>
+                            <span class="text-slate-700">确保电子签 (eVat) 已打印。</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">美金：</span>
+                            <span class="text-slate-700">准备 300-500 美金现钞。必须极其崭新，无折痕、无字迹、无印章，2013年以后版本。</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">APP：</span>
+                            <span class="text-slate-700">下载好 Grab（打车）、Easybook（查大巴）。</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="text-blue-600 font-bold">着装：</span>
+                            <span class="text-slate-700">进入佛塔必须过膝长裤/长裙，不能穿袜子和鞋。建议全程穿夹脚拖。</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 地图部分 -->
+        <div class="mb-8">
+            <div class="relative">
+                <div id="map" class="shadow-2xl border-4 border-white rounded-2xl"></div>
+                <!-- 悬浮操作指南 -->
+                <div class="absolute bottom-6 left-6 z-[1000] bg-white/90 backdrop-blur p-4 rounded-xl shadow-lg border border-slate-200 max-w-xs">
+                    <h4 class="text-xs font-black uppercase mb-2 text-slate-400">路线图说明</h4>
+                    <p class="text-[10px] leading-relaxed text-slate-600">
+                        虚线代表城市间长途轨迹。实线圆圈代表核心打卡点。点击下方卡片或地图图标查看详情。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 行程列表：逐日安排 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Day 1 -->
+                <div class="route-step bg-white p-4 rounded-2xl border border-slate-200 shadow-sm cursor-pointer" onclick="focusLocation([16.82, 96.16], 12)">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">D1</span>
+                        <span class="font-bold text-sm">仰光 - 极限开局与灵性巅峰</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-blue-600">08:05</span> 落地仰光机场 (RGN)。下飞机后先排队入境，Grab 叫车直奔市区。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-blue-600">09:00-10:00</span> 外婆家中餐厅：换汇（美金换缅币）、办 ATOM SIM卡、存行李。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-blue-600">10:20-12:30</span> 中央火车站：购买环城火车票，体验市井生活。<br><span class="text-[10px] text-blue-500">发车时间：08:20、10:20、14:20，可灵活选择顺序与大金塔。</span>
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-blue-600">13:30-16:30</span> 仰光大金塔：2月阳光强烈，15:30后光线极美看日落。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-blue-600">17:00-18:30</span> 快速晚餐，Grab前往Aung Mingalar大巴站。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-blue-600">19:30</span> JJ Express大巴从Aung Mingalar terminal出发前往蒲甘。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 2 -->
+                <div class="route-step bg-white p-4 rounded-2xl border border-slate-200 shadow-sm cursor-pointer" onclick="focusLocation([21.17, 94.86], 13)">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">D2</span>
+                        <span class="font-bold text-sm">蒲甘 - 自由与探索 E-Bike荒野游</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">06:00-09:30</span> 抵达与休整：打车去酒店存行李、吃早餐，建议补觉2-3小时。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">10:00-12:00</span> 租车初探：租E-Bike，前往他冰瑜塔感受最高建筑雄伟。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">12:00-15:00</span> 避暑时光：在The Library Coffee或Sharky餐厅享用午餐，躲避暴晒。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">15:30-17:30</span> 无名塔群探险：骑车深入平原小径，探访马努哈寺和可攀爬小土坡。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">17:30-18:30</span> 日落时刻：前往江边卜帕耶或荒地，看第一场蒲甘日落。
+                        </div>
+                        <div class="text-[11px] text-slate-600 font-semibold text-orange-700">
+                            💡 E-Bike约10,000缅币，建议先补觉恢复体力。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 3 -->
+                <div class="route-step bg-white p-4 rounded-2xl border border-slate-200 shadow-sm cursor-pointer" onclick="focusLocation([21.17, 94.86], 13)">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">D3</span>
+                        <span class="font-bold text-sm">蒲甘 - 效率与舒适 空调包车游</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">05:30-07:30</span> 经典日出：包车司机接送，前往最佳观测点，清晨风大车内更保暖。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">08:00-10:00</span> 皇冠明珠：阿南达寺（最美寺庙，清晨拍照绝佳）、瑞喜宫塔（纯金辉煌）。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">10:30-12:30</span> 漆器艺术：前往良乌镇信誉漆器作坊，空调车移动无惧热浪。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">13:00-15:00</span> 避暑午餐：用餐时间，请司机协助复核/代买明早去茵莱大巴票。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">15:30-17:30</span> 震撼体积：达玛央吉（最大砖塔）、苏拉玛尼（精美壁画）。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-orange-600">18:00-19:30</span> 在推荐观景台看日落，后送回酒店休息，准备明天早上离开蒲甘。
+                        </div>
+                        <div class="text-[11px] text-slate-600 font-semibold text-orange-700">
+                            💡 空调包车60,000缅币，含油费，确认包含早出晚归看日出日落。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 蒲甘实战贴士 -->
+                <div class="route-step bg-amber-50 p-4 rounded-2xl border border-amber-200 shadow-sm">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-amber-600">💡</span>
+                        <span class="font-bold text-sm text-amber-900">蒲甘实战贴士</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-[11px] text-amber-800">
+                            <span class="font-semibold">E-Bike安全：</span>很多路段是深沙地，容易打滑，转弯务必减速。
+                        </div>
+                        <div class="text-[11px] text-amber-800">
+                            <span class="font-semibold">包车沟通：</span>60k价格通常含油费，上车前确认包含"早出晚归（看日出+看日落）"。
+                        </div>
+                        <div class="text-[11px] text-amber-800">
+                            <span class="font-semibold">鞋袜准备：</span>两天都要进寺庙，必须赤脚。建议穿夹脚拖，随身带湿纸巾擦脚。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 4 -->
+                <div class="route-step bg-emerald-50 p-4 rounded-2xl border border-emerald-200 shadow-sm cursor-pointer" onclick="focusLocation([20.9, 95.8], 8)">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="w-6 h-6 bg-emerald-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">D4</span>
+                        <span class="font-bold text-sm text-emerald-900">移动观光：穿越高原</span>
+                    </div>
+                    <ul class="text-[11px] text-emerald-700 space-y-1 ml-1">
+                        <li>• 08:00 蒲甘出发 (全天大巴)</li>
+                        <li>• 17:00 抵达娘瑞，入住 Sandalwood</li>
+                    </ul>
+                </div>
+
+                <!-- Day 5 -->
+                <div class="route-step bg-white p-4 rounded-2xl border border-slate-200 shadow-sm cursor-pointer" onclick="focusLocation([20.66, 96.93], 12)">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 bg-cyan-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">D5</span>
+                        <span class="font-bold text-sm">茵莱湖 - 水上漫游</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-cyan-600">09:00-16:00</span> 全天包船（50k缅币）：水中番茄田、长颈族、手工编织坊、跳猫寺。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-cyan-600">⚠️</span> 阳光强烈，带好防晒和墨镜。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-cyan-600">17:00</span> 码头晚餐，回酒店休息。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 6 -->
+                <div class="route-step bg-white p-4 rounded-2xl border border-slate-200 shadow-sm cursor-pointer" onclick="focusLocation([20.66, 96.93], 12)">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 bg-cyan-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">D6</span>
+                        <span class="font-bold text-sm">茵莱湖 - 深度人文与品酒 → 曼德勒</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-cyan-600">10:00-13:00</span> 步行或骑车逛镇上寺庙，逛市集买特产。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-cyan-600">15:00-18:00</span> 红山庄园：在半山腰品酒，俯瞰茵莱湖日落。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-cyan-600">18:00</span> 前往车站。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-cyan-600">19:30</span> JJ Express夜巴往曼德勒（次日凌晨2:00抵）。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 7 -->
+                <div class="route-step bg-white p-4 rounded-2xl border border-slate-200 shadow-sm cursor-pointer" onclick="focusLocation([21.95, 96.08], 12)">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 bg-purple-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">D7</span>
+                        <span class="font-bold text-sm">曼德勒 - 皇城余晖</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-purple-600">02:00</span> 抵达曼德勒，入住补觉。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-purple-600">14:00-18:00</span> 乌本桥：租小船拍柚木大桥剪影日落。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-purple-600">19:00</span> 市区吃正宗掸族面。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 8 -->
+                <div class="route-step bg-white p-4 rounded-2xl border border-slate-200 shadow-sm cursor-pointer" onclick="focusLocation([21.95, 96.08], 12)">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 bg-purple-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">D8</span>
+                        <span class="font-bold text-sm">曼德勒 - 告别与离境</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-purple-600">09:00-11:30</span> 固都陶佛塔：世界最大书本，白色塔林出片率极高。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-purple-600">13:00</span> 最后一餐，购买缅甸咖啡、木雕特产。
+                        </div>
+                        <div class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-purple-600">14:00</span> Grab前往曼德勒机场，离境飞往曼谷。
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+
+        <!-- 核心预算参考 -->
+        <section class="mt-8">
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-2xl">💰</span>
+                    <h2 class="text-xl font-bold text-slate-900">核心预算参考 (单人)</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-green-100">
+                            <span class="text-slate-700 font-medium">大巴总支出</span>
+                            <span class="text-green-600 font-bold">约 150,000 - 180,000 缅币</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-green-100">
+                            <span class="text-slate-700 font-medium">包船/租车</span>
+                            <span class="text-green-600 font-bold">约 100,000 缅币</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-green-100">
+                            <span class="text-slate-700 font-medium">酒店住宿</span>
+                            <span class="text-green-600 font-bold">视标准而定 (Sandalwood约80k/晚)</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-green-100">
+                            <span class="text-slate-700 font-medium">餐费用</span>
+                            <span class="text-green-600 font-bold">平均 20,000 - 30,000 缅币/天</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 重要提示 -->
+        <section class="mt-8">
+            <div class="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl p-6">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-2xl">⚠️</span>
+                    <h2 class="text-xl font-bold text-slate-900">重要提示</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white rounded-lg border border-amber-100">
+                            <div class="font-semibold text-amber-800 mb-1">网络状况</div>
+                            <div class="text-slate-700 text-sm">缅甸网络不稳，建议提前下载Google Maps离线地图。</div>
+                        </div>
+                        <div class="p-3 bg-white rounded-lg border border-amber-100">
+                            <div class="font-semibold text-amber-800 mb-1">夜巴保暖</div>
+                            <div class="text-slate-700 text-sm">JJ Express空调非常足，被称为"移动冷库"，务必随身带一件厚外套。</div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white rounded-lg border border-amber-100">
+                            <div class="font-semibold text-amber-800 mb-1">光脚行走</div>
+                            <div class="text-slate-700 text-sm">佛塔区域必须光脚，建议带好湿纸巾，出塔时擦脚。</div>
+                        </div>
+                        <div class="p-3 bg-white rounded-lg border border-amber-100">
+                            <div class="font-semibold text-amber-800 mb-1">凌晨抵达安全</div>
+                            <div class="text-slate-700 text-sm">曼德勒凌晨2点到站时，Grab仍然可用，但建议提前下载好地图并存好酒店位置。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 初始化地图
+        const map = L.map('map', { zoomControl: false }).setView([19.5, 96.2], 6);
+        
+        // 使用干净的底图
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // 数据定义
+        const locations = [
+            // 仰光节点
+            { id: 'y1', name: "仰光国际机场 (RGN)", city: "yangon", type: "transport", coords: [16.9042, 96.1332], desc: "落地签/入境及Grab起点" },
+            { id: 'y2', name: "外婆家中餐厅", city: "yangon", type: "task", coords: [16.8285, 96.1364], desc: "物流/换汇/SIM卡实战基地" },
+            { id: 'y3', name: "Yangon Central (起点)", city: "yangon", type: "spot", coords: [16.7841, 96.1611], desc: "7号站台买票，10:20 发车班次最适合你" },
+            { id: 'y_rail_1', name: "Pagoda Road", city: "yangon", type: "railway", coords: [16.7876, 96.1558], desc: "经过苏雷大金塔后方的铁轨区，人文感极强" },
+            { id: 'y_rail_2', name: "Lanmadaw", city: "yangon", type: "railway", coords: [16.7885, 96.1482], desc: "靠近仰光唐人街，周围有密集的早市" },
+            { id: 'y_rail_target', name: "Pyay Road (关键站)", city: "yangon", type: "railway", coords: [16.8085, 96.1360], desc: "离大金塔最近的站。下车后打车 5 分钟即达" },
+            { id: 'y_rail_3', name: "Shan Road", city: "yangon", type: "railway", coords: [16.8153, 96.1315], desc: "穿过仰光大学区域，铁轨两旁开始变绿" },
+            { id: 'y_rail_4', name: "Ahlone Road", city: "yangon", type: "railway", coords: [16.8225, 96.1268], desc: "附近有许多当地的小餐馆，适合观察学生生活" },
+            { id: 'y_rail_5', name: "Kemmendine", city: "yangon", type: "railway", coords: [16.8123, 96.1185], desc: "著名的水果批发中转点，车厢内常有箩筐堆满" },
+            { id: 'y_rail_6', name: "Hanthawaddy", city: "yangon", type: "railway", coords: [16.8192, 96.1215], desc: "靠近大湖（Inya Lake）南岸" },
+            { id: 'y_rail_7', name: "Hletan", city: "yangon", type: "railway", coords: [16.8285, 96.1285], desc: "仰光的\"西单\"，年轻人聚集地，铁轨市集极其拥挤" },
+            { id: 'y_rail_8', name: "Kamayut", city: "yangon", type: "railway", coords: [16.8415, 96.1262], desc: "沿途风景从城市建筑转向低矮的民居" },
+            { id: 'y_rail_9', name: "Insein", city: "yangon", type: "railway", coords: [16.8851, 96.1018], desc: "整个线路的西侧大站，车厢会在此换乘或长时间停留" },
+            { id: 'y_rail_10', name: "Danyingon (必去)", city: "yangon", type: "railway", coords: [16.9231, 96.1035], desc: "铁轨菜市场！摊贩直接在轨道上摆摊，最震撼" },
+            { id: 'y_rail_11', name: "Mingaladon", city: "yangon", type: "railway", coords: [16.9042, 96.1512], desc: "离机场最近的站，但不建议拖行李从此站去机场" },
+            { id: 'y_rail_12', name: "Tadagale", city: "yangon", type: "railway", coords: [16.8465, 96.1685], desc: "回程进入东侧郊区，多为当地平民窟和工厂" },
+            { id: 'y_rail_13', name: "Pazundaung", city: "yangon", type: "railway", coords: [16.7865, 96.1755], desc: "进入中央车站前的最后一站，可以跳车去吃当地面条" },
+            { id: 'y4', name: "仰光大金塔 (西门)", city: "yangon", type: "spot", coords: [16.7983, 96.1450], desc: "全缅灵性中心，西门人少且长廊极美" },
+            { id: 'y4_south', name: "仰光大金塔 (南门)", city: "yangon", type: "spot", coords: [16.7951, 96.1491], desc: "主入口，打车最常用的定位点" },
+            { id: 'y5', name: "Aung Mingalar 大巴站", city: "yangon", type: "transport", coords: [16.9205, 96.1658], desc: "前往蒲甘的夜巴始发站 (建议搜JJ Express)" },
+
+            // 蒲甘节点
+            { id: 'b1', name: "Shwe Pyi 大巴站", city: "bagan", type: "transport", coords: [21.1908, 94.9122], desc: "抵达蒲甘的第一站" },
+            { id: 'b2', name: "阿南达寺", city: "bagan", type: "spot", coords: [21.1711, 94.8677], desc: "最美、保存最完整的佛塔" },
+            { id: 'b3', name: "他冰瑜塔", city: "bagan", type: "spot", coords: [21.1688, 94.8629], desc: "蒲甘最高塔，E-Bike必去" },
+            { id: 'b4', name: "达玛央吉", city: "bagan", type: "spot", coords: [21.1620, 94.8729], desc: "\"残暴\"之塔，体积最庞大" },
+            { id: 'b5', name: "苏拉玛尼佛塔", city: "bagan", type: "spot", coords: [21.1649, 94.8814], desc: "拥有精美壁画的\"冠冕之宝\"" },
+            { id: 'b6', name: "瑞喜宫塔", city: "bagan", type: "spot", coords: [21.1951, 94.8939], desc: "开山之作，纯金辉煌" },
+            { id: 'b7', name: "卜帕耶", city: "bagan", type: "spot", coords: [21.1784, 94.8587], desc: "江边金色葫芦塔，看江景日落" },
+            { id: 'b8', name: "马努哈寺", city: "bagan", type: "spot", coords: [21.1448, 94.8569], desc: "巨大的室内坐佛，感受压迫的美感" },
+            { id: 'b9', name: "The Library Coffee", city: "bagan", type: "spot", coords: [21.1915, 94.8872], desc: "午后避暑绝佳咖啡馆" },
+
+            // 茵莱湖节点
+            { id: 'i1', name: "娘瑞镇 (Sandalwood Hotel)", city: "inle", type: "stay", coords: [20.6620, 96.9320], desc: "镇中心住宿，步行可达市集" },
+            { id: 'i2', name: "水上番茄园", city: "inle", type: "spot", coords: [20.5741, 96.9038], desc: "漂浮在湖面上的神奇农田" },
+            { id: 'i3', name: "彭都奥佛塔", city: "inle", type: "spot", coords: [20.4789, 96.8856], desc: "湖上圣地，五尊贴满金箔的小佛像" },
+            { id: 'i4', name: "跳猫寺", city: "inle", type: "spot", coords: [20.5285, 96.8942], desc: "木结构水上寺庙，著名的猫咪栖息地" },
+            { id: 'i5', name: "因代古塔群", city: "inle", type: "spot", coords: [20.4851, 96.8455], desc: "神秘的丛林塔林" },
+            { id: 'i6', name: "红山庄园", city: "inle", type: "spot", coords: [20.6405, 96.9556], desc: "俯瞰全景，享受缅甸产红酒" },
+
+            // 曼德勒节点
+            { id: 'm1', name: "乌本桥", city: "mandalay", type: "spot", coords: [21.8915, 96.0562], desc: "剪影日落，建议17:00前抵达" },
+            { id: 'm2', name: "固都陶佛塔", city: "mandalay", type: "spot", coords: [21.9935, 96.1122], desc: "世界最大书本，729座白塔碑林" },
+            { id: 'm3', name: "曼德勒皇宫 (南门)", city: "mandalay", type: "spot", coords: [21.9882, 96.0965], desc: "护城河壮丽，进宫需押护照" },
+            { id: 'm4', name: "曼德勒山 (日落点)", city: "mandalay", type: "spot", coords: [22.0150, 96.1105], desc: "乘电梯直达山顶，俯瞰全城" },
+            { id: 'm5', name: "Mingalabar 餐厅", city: "mandalay", type: "spot", coords: [21.9685, 96.0962], desc: "非常著名的传统缅餐" },
+            { id: 'm6', name: "曼德勒国际机场 (MDL)", city: "mandalay", type: "transport", coords: [21.7011, 95.9765], desc: "行程终点，离境口岸" }
+        ];
+
+        // 颜色配置
+        const colors = {
+            yangon: "#3b82f6",
+            bagan: "#f97316",
+            inle: "#10b981",
+            mandalay: "#a855f7"
+        };
+
+        // 渲染城市间大轨迹线
+        const cityCenters = [
+            [16.82, 96.16], // 仰光
+            [21.17, 94.86], // 蒲甘
+            [20.66, 96.93], // 茵莱
+            [21.95, 96.08]  // 曼德勒
+        ];
+
+        L.polyline(cityCenters, {
+            color: '#cbd5e1',
+            weight: 3,
+            dashArray: '8, 12',
+            lineJoin: 'round'
+        }).addTo(map);
+
+        // 绘制仰光环城小火车路线
+        const circularRailwayStations = [
+            [16.7841, 96.1611], // Yangon Central
+            [16.7876, 96.1558], // Pagoda Road
+            [16.7885, 96.1482], // Lanmadaw
+            [16.8085, 96.1360], // Pyay Road
+            [16.8153, 96.1315], // Shan Road
+            [16.8225, 96.1268], // Ahlone Road
+            [16.8123, 96.1185], // Kemmendine
+            [16.8192, 96.1215], // Hanthawaddy
+            [16.8285, 96.1285], // Hletan
+            [16.8415, 96.1262], // Kamayut
+            [16.8851, 96.1018], // Insein
+            [16.9231, 96.1035], // Danyingon
+            [16.9042, 96.1512], // Mingaladon
+            [16.8465, 96.1685], // Tadagale
+            [16.7865, 96.1755], // Pazundaung
+            [16.7841, 96.1611]  // 回到起点
+        ];
+
+        L.polyline(circularRailwayStations, {
+            color: '#3b82f6',
+            weight: 2,
+            dashArray: '5, 5',
+            lineJoin: 'round',
+            opacity: 0.7
+        }).addTo(map);
+
+        // 渲染具体标记点
+        locations.forEach(loc => {
+            let radius, fillColor;
+            if (loc.type === 'transport') {
+                radius = 8;
+                fillColor = colors[loc.city];
+            } else if (loc.type === 'railway') {
+                radius = 5;
+                fillColor = '#3b82f6'; // 蓝色表示火车站
+            } else {
+                radius = 6;
+                fillColor = colors[loc.city];
+            }
+            
+            const marker = L.circleMarker(loc.coords, {
+                radius: radius,
+                fillColor: fillColor,
+                color: "#fff",
+                weight: 2,
+                fillOpacity: 1
+            }).addTo(map);
+
+            marker.bindPopup(`
+                <div class="p-2">
+                    <h3 class="font-bold text-sm text-slate-800">${loc.name}</h3>
+                    <p class="text-[11px] text-slate-500 mt-1">${loc.desc}</p>
+                </div>
+            `, { className: 'custom-popup' });
+        });
+
+        // 辅助函数
+        function focusLocation(coords, zoom) {
+            map.flyTo(coords, zoom, { duration: 1.5 });
+        }
+
+        // 自动聚焦第一个点
+        window.onload = () => {
+            focusLocation([16.82, 96.16], 10);
+        };
+    </script>
+</body>
+</html>
